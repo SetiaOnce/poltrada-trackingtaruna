@@ -149,13 +149,7 @@ const _lihatDetailTaruna = () =>{
                 loadPembayaranPendidikan(data.row.nim);
                 loadPeanggaran(data.row.nim);
                 loadPrestasi(data.row.nim);
-                //this for krs
-                $('#tablePersemester').html(``);
-                for (i = 0; i < data.krsSemester.length; i++) {
-                    var smt = data.krsSemester[i].smt;
-                    viewTablekrs(smt);
-                    loadkrsMahasiswa(data.row.nim, smt);
-                }
+                loadkrsMahasiswa(data.row.nim);
                 loadkhsMahasiswa(data.row.nim);
             }else{
                 if(data.wrongNik){
@@ -586,30 +580,10 @@ function loadPrestasi(nim) {
     $('#dt-prestasi').css('width', '100%').DataTable().columns.adjust().draw();
 };
 
-// THIS BELOW FOR VIEW DATA KRS
-function viewTablekrs(smt){
-    $('#tablePersemester').append(`
-        <span class="text-dark-50 text-hover-primary font-weight-bold">Semester `+ smt +`</span>
-        <div class="table-responsive">
-            <table id="dt-krs`+ smt +`" class="table table-hover table-bordered table-head-custom dtr-inline w-100">
-                <thead class="thead-dark">
-                    <tr>
-                        <th class="text-center align-middle">No.</th>
-                        <th class="align-middle">KODE MK</th>
-                        <th class="align-middle">NAMA MATA KULIAH</th>
-                        <th class="align-middle">SKS</th>
-                        <th class="align-middle">KELAS</th>
-                        <th class="align-middle">JML.PERTEMUAN</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-    `)
-}
-//load krs mahasiswa
-function loadkrsMahasiswa(nim, smt) {
+//Load KRS mahasiswa
+function loadkrsMahasiswa(nim) {
     //datatables
-    $('#dt-krs'+ smt +'').DataTable({
+    $('#dt-krs').DataTable({
         "processing": true,
         "serverSide": true,
         "order" : [],
@@ -620,7 +594,6 @@ function loadkrsMahasiswa(nim, smt) {
             "type" : "POST",
             "data": function ( data ) {
                 data.nim= nim;
-                data.smt= smt;
             }
         },
         "destroy" : true,
@@ -631,22 +604,22 @@ function loadkrsMahasiswa(nim, smt) {
         "LengthChange" : true,
         "paginate" : true,
         "pageResize" : true,
+        "paging": false,
+        "info" : false,
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex'},
+            { data: 'semester', name: 'semester'},
             { data: 'kode_mk', name: 'kode_mk'},
             { data: 'nama_mk', name: 'nama_mk'},
             { data: 'jmlh_sks', name: 'jmlh_sks'},
-            { data: 'nama_kelas', name: 'nama_kelas'},
             { data: 'jumlah_pertemuan', name: 'jumlah_pertemuan'},
         ],
         //Set column definition initialisation properties.
         "columnDefs": [
-            { "width": "5%", "targets": 0, "className": "align-top" },
+            { "width": "5%", "targets": 0, "className": "align-top text-center", "visible": false},
             { "width": "20%", "targets": 1, "className": "align-top" },
             { "width": "50%", "targets": 2, "className": "align-top" },
             { "width": "5%", "targets": 3, "className": "align-top text-center"},
             { "width": "10%", "targets": 4, "className": "align-top text-center"},
-            { "width": "10%", "targets": 5, "className": "align-top text-center"},
         ],
         "oLanguage": {
             "sSearch" : "<i class='flaticon-search-1'></i>",
@@ -664,21 +637,27 @@ function loadkrsMahasiswa(nim, smt) {
             }
         },
         "fnDrawCallback": function () {
-            $('[name="dt-krs'+ smt +'_length"]').removeClass('custom-select custom-select-sm').selectpicker(), $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'}).on('click', function(){$(this).tooltip('hide')});
-            $('.image-popup').magnificPopup({
-                type: 'image',  closeOnContentClick: true, closeBtnInside: false, fixedContentPos: true,
-                image: {
-                    verticalFit: true
-                },
-                zoom: {
-                    enabled: true, duration: 150
-                },
-            });
+            $('[name="dt-krs_length"]').removeClass('custom-select custom-select-sm').selectpicker(), $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'}).on('click', function(){$(this).tooltip('hide')});
+            var api = this.api();
+			var rows = api.rows({
+				page: 'current'
+			}).nodes();
+			var last = null;
+			api.column(0, {
+				page: 'current'
+			}).data().each(function (group, i) {
+				if (last !== group) {
+					$(rows).eq(i).before(
+                        '<tr class="align-middle"><td class="bg-secondary" colspan="6"><b>SEMESTER ' + group + '</b></td></tr>'
+					);
+					last = group;
+				}
+			});
         }
     });
-    $('#dt-krs'+ smt +'').css('width', '100%').DataTable().columns.adjust().draw();
+    $('#dt-krs').css('width', '100%').DataTable().columns.adjust().draw();
 };
-//load khs mahasiswa
+//load KHS mahasiswa
 function loadkhsMahasiswa(nim) {
     //datatables
     $('#dt-khs').DataTable({
@@ -716,8 +695,8 @@ function loadkhsMahasiswa(nim) {
         "columnDefs": [
             { "width": "5%", "targets": 0, "className": "align-top text-center", "visible": false},
             { "width": "10%", "targets": 1, "className": "align-top text-center",  "orderable": false},
-            { "width": "30%", "targets": 2, "className": "align-top",  "orderable": false},
-            { "width": "15%", "targets": 3, "className": "align-top text-center", "orderable": false},
+            { "width": "10%", "targets": 2, "className": "align-top",  "orderable": false},
+            { "width": "30%", "targets": 3, "className": "align-top text-center", "orderable": false},
             { "width": "15%", "targets": 4, "className": "align-top text-center", "orderable": false},
             { "width": "15%", "targets": 5, "className": "align-top text-center",  "orderable": false},
         ],
@@ -766,3 +745,7 @@ function loadkhsMahasiswa(nim) {
     });
     $('#dt-khs').css('width', '100%').DataTable().columns.adjust().draw();
 };
+// print page
+const _printDetailTaruna = () => {
+    window.print();
+}
