@@ -66,6 +66,7 @@ Route::group(['middleware' => 'Session'], function() {
         });
         //  ===========>> CUMMON  <<============== //
         Route::get('/load_user_profile', [CommonController::class, 'loaduserProfile']);
+        Route::get('/ajax_get_count_widget', [CommonController::class, 'countWidget']);
         Route::get('/load_profile', [CommonController::class, 'loadProfile']);
         Route::get('/load_app_profile_site', [CommonController::class, 'loadProfileApp']);
         Route::get('/load_trend_tracker', [CommonController::class, 'loadTrendTracker']);
@@ -91,6 +92,7 @@ Route::controller(BannerController::class)->group(function(){
 // for view data prodi
 Route::controller(ViewDataProdiController::class)->group(function(){
     Route::post('/ajax/load_data_prodi', 'data');
+    Route::get('/ajax/load_list_taruna', 'listTaruna');
 });
 
 // THIS BELLOW FOR TRACKING TARUNA FRONT//
