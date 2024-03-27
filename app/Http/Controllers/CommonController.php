@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\Shortcut;
+use App\Models\AkademikMahasiswa;
 use App\Models\Pesanan;
 use App\Models\Produk;
 use App\Models\ProfileApp;
@@ -116,6 +117,20 @@ class CommonController extends Controller
         }
         return response()->json($output);
     }
+    public function countWidget()
+    {
+        $taruna = AkademikMahasiswa::whereStatus(1)->count();
+        $tarunaL = AkademikMahasiswa::whereStatus(1)->whereJenisKelamin('LAKI-LAKI')->count();
+        $tarunaP = AkademikMahasiswa::whereStatus(1)->whereJenisKelamin('WANITA')->count();
+
+        $response = array(
+            'status' => TRUE,
+            'jmlh_taruna' => $taruna,
+            'jmlh_taruna_p' => $tarunaL,
+            'jmlh_taruna_l' => $tarunaP,
+        );
+        return response()->json($response);
+    }
     public function loadTrendTracker()
     {
         $year = date('Y');
@@ -135,5 +150,4 @@ class CommonController extends Controller
         );
         return response()->json($response);
     }
-
 }
