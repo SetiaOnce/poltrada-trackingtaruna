@@ -1,7 +1,7 @@
 "use strict";
 //Class Definition
 // var save_method;
-var table;
+var table, table2;
 //Load Datatables banner
 const _loadDataProdi = () => {
     //datatables
@@ -39,6 +39,7 @@ const _loadDataProdi = () => {
             { data: 'tgl_akreditasi', name: 'tgl_akreditasi'},
             { data: 'exp_akreditasi', name: 'exp_akreditasi'},
             { data: 'no_sk_prodi', name: 'no_sk_prodi'},
+            { data: 'jmlh_taruna', name: 'jmlh_taruna'},
         ],
         //Set column definition initialisation properties.
         "columnDefs": [
@@ -48,7 +49,8 @@ const _loadDataProdi = () => {
             { "width": "25%", "targets": 3, "className": "align-top"},
             { "width": "5%", "targets": 4, "className": "align-top text-center" },
             { "width": "5%", "targets": 5, "className": "align-top text-center" },
-            { "width": "19%", "targets": 6, "className": "align-top ", "orderable": false },
+            { "width": "18%", "targets": 6, "className": "align-top ", "orderable": false },
+            { "width": "1%", "targets": 7, "className": "align-top text-center", "orderable": false },
         ],
         "oLanguage": {
             "sSearch" : "<i class='flaticon-search-1'></i>",
@@ -84,7 +86,113 @@ const _loadDataProdi = () => {
         table.button(0).trigger();
     });
 }
-
+// view detail taruna
+const viewListTaruna = (kode_prodi) => {
+    // datatables
+    _blockUiPages(1);
+    $.ajax({
+        url: BASE_URL+ "/ajax/load_list_taruna",
+        headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') },
+        type: 'GET',
+        dataType: 'JSON',
+        data: {
+            kode_prodi,
+        },
+        success: function (data) {
+            _blockUiPages(0);
+            let prodi = data.row.prodi, taruna = data.row.data_taruna;
+            $('#modalViewTaruna .header-detail').html(`<h3 class="text-gray-900 fw-bolder mb-3">
+                <i class="bi bi-list-ul fs-3 align-middle text-dark mr-2"></i>Data program studi
+                </h3>
+                <div class="row ">
+                    <table class="table table-rounded table-row-bordered border">
+                        <tbody>
+                            <tr>
+                                <td style="width: 30px">Kode prodi</td>
+                                <td style="width: 400px">`+prodi.kode_prodi+`</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30px">Program Studi</td>
+                                <td style="width: 400px">`+prodi.nama_prodi+`</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30px">SK Akreditasi</td>
+                                <td style="width: 400px">`+prodi.sk_akreditasi+`</td>
+                            </tr>
+                            <tr>
+                                <td style="width: 30px">Akreditasi</td>
+                                <td style="width: 400px">`+prodi.akreditasi+`</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`);
+            $('#dt-taruna tbody').html(taruna);
+            $('#modalViewTaruna').modal('show');
+            $('#modalViewTaruna .modal-title').html('Detail data');
+        }, complete: function(){
+            table = $('#dt-taruna').DataTable({
+                "processing": false,
+                "serverSide": false,
+                "order" : [],
+                "destroy" : true,
+                "draw" : true,
+                "deferRender" : true,
+                "responsive" : false,
+                "autoWidth" : true,
+                "LengthChange" : true,
+                "paginate" : true,
+                "pageResize" : true,
+                // "columnDefs": [
+                //     { "width": "1%", "targets": 0, "className": "align-top text-center" },
+                //     { "width": "5%", "targets": 1, "className": "align-top" },
+                //     { "width": "25%", "targets": 2, "className": "align-top" },
+                //     { "width": "25%", "targets": 3, "className": "align-top"},
+                //     { "width": "5%", "targets": 4, "className": "align-top text-center" },
+                //     { "width": "5%", "targets": 5, "className": "align-top text-center" },
+                //     { "width": "18%", "targets": 6, "className": "align-top ", "orderable": false },
+                //     { "width": "1%", "targets": 7, "className": "align-top text-center", "orderable": false },
+                // ],
+                "oLanguage": {
+                    "sSearch" : "<i class='flaticon-search-1'></i>",
+                    "sSearchPlaceholder": "Pencarian...",
+                    "sEmptyTable" : "Tidak ada Data yang dapat ditampilkan..",
+                    "sInfo" : "Menampilkan _START_ s/d _END_ dari _TOTAL_ entri.",
+                    "sInfoEmpty" : "Menampilkan 0 - 0 dari 0 entri.",
+                    "sInfoFiltered" : "",
+                    "sProcessing" : `<div class="d-flex justify-content-center align-items-center"><span class="spinner spinner-track position-static spinner-primary spinner-lg spinner-left"></span> <span class="text-dark">Mohon tunggu...</span></div>`,
+                    "sZeroRecords": "Tidak ada Data yang dapat ditampilkan..",
+                    "sLengthMenu" : "Tampilkan _MENU_",
+                    "oPaginate" : {
+                        "sPrevious" : "Sebelumnya",
+                        "sNext" : "Selanjutnya"
+                    }
+                },
+                "fnDrawCallback": function () {
+                    $('[name="dt-taruna_length"]').removeClass('custom-select custom-select-sm').selectpicker(), $('[data-toggle="tooltip"]').tooltip({trigger: 'hover'}).on('click', function(){$(this).tooltip('hide')});
+                    $('.image-popup').magnificPopup({
+                        type: 'image',  closeOnContentClick: true, closeBtnInside: false, fixedContentPos: true,
+                        image: {
+                            verticalFit: true
+                        },
+                        zoom: {
+                            enabled: true, duration: 150
+                        },
+                    });
+                }
+            });
+            $('#dt-taruna').css('width', '100%').DataTable().columns.adjust().draw();
+        }, error: function (jqXHR, textStatus, errorThrown) {
+            _blockUiPages(0);
+            console.log("load data is error!");
+            Swal.fire({
+                title: "Ooops!",
+                text: "Terjadi kesalahan yang tidak diketahui, Periksa koneksi jaringan internet lalu coba kembali. Mohon hubungi pengembang jika masih mengalami masalah yang sama.",
+                icon: "error",
+                allowOutsideClick: false,
+            });
+        },
+    });
+}
 //Class Initialization
 jQuery(document).ready(function() {
     _loadDataProdi();
