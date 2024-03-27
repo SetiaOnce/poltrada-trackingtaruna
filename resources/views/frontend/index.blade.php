@@ -14,6 +14,11 @@
 .td-body-noopas{
     line-height: 1.5; font-size: 10pt; vertical-align: top;
 }
+@media print {
+    .hide-on-print {
+        display: none !important;
+    }
+}
 </style>    
 @stop
 <div class="d-flex flex-column-fluid">
@@ -39,7 +44,10 @@
                         <div class="card-title"></div>
                         <div class="card-toolbar">
                             <!--begin::Button-->
-                            <button type="button" class="btn btn-sm btn-danger font-weight-bolder" onclick="closeDetailTaruan()"><i class="fas fa-times"></i> Tutup</button>
+                            <button type="button" class="btn btn-sm btn-danger font-weight-bolder mr-2" onclick="_printDetailTaruna()"><i class="fa fa-print"></i> Print</button>
+                            <!--end::Button-->
+                            <!--begin::Button-->
+                            <button type="button" class="btn btn-sm btn-light font-weight-bolder" onclick="closeDetailTaruan()"><i class="fas fa-times"></i> Tutup</button>
                             <!--end::Button-->
                         </div>
                     </div>
@@ -188,8 +196,19 @@
                                         <div class="d-flex align-items-baseline flex-wrap mr-5 titlePageBreadcrumb">
                                             <h5 class="text-dark font-weight-bold my-1 mr-5"><i class="flaticon2-website text-dark"></i> KRS</h5>
                                         </div>
-                                        <div id="tablePersemester">
-      
+                                        <div id="tablePersemester"></div>
+                                        <div class="table-responsive">
+                                            <table id="dt-krs" class="table table-hover table-bordered table-head-custom dtr-inline w-100">
+                                                <thead class="thead-dark">
+                                                    <tr>
+                                                        <th class="align-middle">SEMESTER</th>
+                                                        <th class="align-middle">KODE MK</th>
+                                                        <th class="align-middle">NAMA MATA KULIAH</th>
+                                                        <th class="align-middle">SKS</th>
+                                                        <th class="align-middle">JML.PERTEMUAN</th>
+                                                    </tr>
+                                                </thead>
+                                            </table>
                                         </div>
                                     </div>
                                     <div id="mahasiswa-khs" class="mt-4">
