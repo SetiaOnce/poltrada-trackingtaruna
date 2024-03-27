@@ -243,19 +243,17 @@ class TrackingTarunaController extends Controller
     } 
     public function krsTaruna(Request $request)
     {
-        $data = AkademikKelasDetail::select(
-            'akademik_kelas.nama_kelas as nama_kelas',
-            'akademik_kelas_header.jumlah_pertemuan as jumlah_pertemuan',
+        $data = AkademikMahasiswa::select(
             'akademik_mata_kuliah.nama_mata_kuliah as nama_mk',
             'akademik_mata_kuliah.kode_mata_kuliah as kode_mk',
             'akademik_mata_kuliah.sks_mata_kuliah as jmlh_sks',
+            'akademik_kurikulum_mk.smt as semester',
         )
-        ->join('akademik_kelas', 'akademik_kelas.id', 'akademik_kelas_detail.kelas_id')
-        ->join('akademik_kelas_header', 'akademik_kelas_header.id', 'akademik_kelas_detail.kelas_id')
-        ->join('akademik_kurikulum_mk', 'akademik_kurikulum_mk.kurikulum_id', 'akademik_kelas_header.kurikulum_id')
-        ->join('akademik_mata_kuliah', 'akademik_mata_kuliah.id', 'akademik_kurikulum_mk.mk_id')
-        ->where('akademik_kelas_detail.nim', $request->input('nim'))
-        ->where('akademik_kurikulum_mk.smt', $request->input('smt'))
+        ->join('akademik_kurikulum', 'akademik_kurikulum.kode_prodi', '=', 'akademik_mahasiswa.kode_prodi')
+        ->join('akademik_kurikulum_mk', 'akademik_kurikulum_mk.kurikulum_id', 'akademik_kurikulum.id')
+        ->join('akademik_mata_kuliah', 'akademik_mata_kuliah.id', '=', 'akademik_kurikulum_mk.mk_id')
+        ->where('akademik_mahasiswa.nim', $request->input('nim'))
+        ->orderBy('akademik_kurikulum_mk.smt', 'ASC')
         ->get();
 
         return Datatables::of($data)->addIndexColumn()
@@ -268,13 +266,10 @@ class TrackingTarunaController extends Controller
             ->editColumn('jmlh_sks', function ($row) {
                 return $row->jmlh_sks;
             })
-            ->editColumn('nama_kelas', function ($row) {
-                return $row->nama_kelas;
-            })
             ->editColumn('jumlah_pertemuan', function ($row) {
-                return $row->jumlah_pertemuan;
+                return 16;
             })
-            ->rawColumns(['kode_mk', 'nama_mk', 'jmlh_sks', 'nama_kelas', 'jumlah_pertemuan'])
+            ->rawColumns(['kode_mk', 'nama_mk', 'jmlh_sks', 'jumlah_pertemuan'])
             ->make(true);
     } 
     public function khsTaruna(Request $request)
