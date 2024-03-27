@@ -68,7 +68,90 @@ function load_init() {
         }
     });
 }
-
+//Class Definition
+function _loadFirstWidget() {
+    //Load Firts Counter
+    $.ajax({
+		url: BASE_URL+ "/app_admin/ajax_get_count_widget",
+		type: "GET",
+		dataType: "JSON",
+		success: function (data) {
+			var widgetDiv1 = `<div class="col-xl-4 col-md-6">
+                <a href="javascript:void(0);">
+                    <!--begin::Stats Widget 10-->
+                    <div class="card card-custom card-stretch gutter-b shadow-md bg-primary">
+                        <!--begin::Body-->
+                        <div class="card-body p-0">
+                            <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
+                                <span class="symbol symbol-50 symbol-light-primary mr-2">
+                                    <span class="symbol-label">
+                                        <i class="bi bi-people-fill icon-2x text-primary"></i>
+                                    </span>
+                                </span>
+                                <div class="d-flex flex-column text-right text-light">
+                                    <span class="font-weight-bolder font-size-h3">` +data.jmlh_taruna+ `</span>
+                                    <span class="font-weight-bold mt-2">JUMLAH TARUNA</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Stats Widget 10-->
+                </a>
+            </div>
+            <div class="col-xl-4 col-md-6">
+                <a href="javascript:void(0);">
+                    <!--begin::Stats Widget 10-->
+                    <div class="card card-custom card-stretch gutter-b shadow-md bg-info">
+                        <!--begin::Body-->
+                        <div class="card-body p-0">
+                            <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
+                                <span class="symbol symbol-50 symbol-light-info mr-2">
+                                    <span class="symbol-label">
+                                        <i class="fa fa-male icon-2x text-info"></i>
+                                    </span>
+                                </span>
+                                <div class="d-flex flex-column text-right text-light">
+                                    <span class="font-weight-bolder font-size-h3">` +data.jmlh_taruna_p+ `</span>
+                                    <span class="font-weight-bold mt-2">TARUNA LAKI-LAKI</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Stats Widget 10-->
+                </a>
+            </div>
+            <div class="col-xl-4 col-md-6">
+                <a href="javascript:void(0);">
+                    <!--begin::Stats Widget 10-->
+                    <div class="card card-custom card-stretch gutter-b shadow-md bg-success">
+                        <!--begin::Body-->
+                        <div class="card-body p-0">
+                            <div class="d-flex align-items-center justify-content-between card-spacer flex-grow-1">
+                                <span class="symbol symbol-50 symbol-light-success mr-2">
+                                    <span class="symbol-label">
+                                        <i class="fa fa-female icon-2x text-success"></i>
+                                    </span>
+                                </span>
+                                <div class="d-flex flex-column text-right text-light">
+                                    <span class="font-weight-bolder font-size-h3">` +data.jmlh_taruna_l+ `</span>
+                                    <span class="font-weight-bold mt-2">TARUNA WANITA</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Body-->
+                    </div>
+                    <!--end::Stats Widget 10-->
+                </a>
+            </div>`;
+            $('#firstWidget').html(widgetDiv1);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			console.log('load data is error!');
+		}
+	});
+}
 // for trend trecking data for 1 month
 const _loadTrendTreckingTaruna = () => {
     var optionsChart1 = {
@@ -145,7 +228,7 @@ const _loadTrendTreckingTaruna = () => {
                         categories: data.dateViews,
                 },
                 title: {
-                    text: 'TREND JUMLAH TRACKING TARUNA BULAN '+ data.monthYear,
+                    text: 'TREND JUMLAH JUMLAH PENCARI DATA BULAN '+ data.monthYear,
                 },
             });
         }, error: function (jqXHR, textStatus, errorThrown) {
@@ -156,5 +239,5 @@ const _loadTrendTreckingTaruna = () => {
 
 //Class Initialization
 jQuery(document).ready(function() {
-    load_init(), _loadTrendTreckingTaruna();
+    load_init(), _loadFirstWidget(), _loadTrendTreckingTaruna();
 });
