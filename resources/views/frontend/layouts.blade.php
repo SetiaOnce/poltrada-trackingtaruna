@@ -80,7 +80,7 @@ $profiles = App\Models\ProfileApp::where('id', 1)->first();
                         <img alt="Logo" src="{{ $Base_Img }}/statis-placeholder.png" class="max-h-35px" />
                     </a>
                 </nav>
-                <div class="container mt-6 mb-6">
+                <div class="container mt-6 mb-6 hide-on-print">
                     <div class="row">
                         <div class="text-center">
                             <div class="col-lg-12" id="sectionBanner">
