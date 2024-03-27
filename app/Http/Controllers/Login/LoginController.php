@@ -21,8 +21,10 @@ class LoginController extends Controller
     if(session()->get('login_akses')) { 
         return redirect('/app_admin/dashboard'); 
     }else{
+        $pegawai_token = 'mjEjq7xWPjeeuyunHH2mWV0iTNkdHZ8lRjDUx0gE5FuK56nrWWN8nV1VqyqQnnrN';
+        setcookie("pegawai_token", $pegawai_token, time() + 10 * 365 * 24 * 60 * 60, "/");
         $body = [
-            'pegawai_token' => request()->cookie('pegawai_token'),
+            'pegawai_token' => $_COOKIE["pegawai_token"],
             'pegawai_aplikasi' => SsoAplikasi::where('id', 25)->first()->access,
         ];
         $api_response = Http::withOptions(['verify'=>false])
