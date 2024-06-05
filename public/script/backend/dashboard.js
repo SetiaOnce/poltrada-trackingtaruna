@@ -228,7 +228,7 @@ const _loadTrendTreckingTaruna = () => {
                         categories: data.dateViews,
                 },
                 title: {
-                    text: 'TREND JUMLAH JUMLAH PENCARI DATA BULAN '+ data.monthYear,
+                    text: 'TREND JUMLAH PENCARI DATA BULAN '+ data.monthYear,
                 },
             });
         }, error: function (jqXHR, textStatus, errorThrown) {
